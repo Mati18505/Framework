@@ -9,6 +9,7 @@ project "Framework"
     pchsource "./source/pch.cpp"
 
     includedirs {
+        "./source",
         "./vendor/glfw/include"
     }
 
