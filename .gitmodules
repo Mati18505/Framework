@@ -1,0 +1,3 @@
+[submodule "Framework/vendor/glfw"]
+	path = Framework/vendor/glfw
+	url = https://github.com/TheCherno/glfw
