@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include "Event.h"
 
 namespace Framework
 {
@@ -9,7 +10,7 @@ namespace Framework
 		virtual void OnAttach() = 0;
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
-		virtual void OnEvent() = 0;
+		virtual void OnEvent(Event& e) = 0;
 		virtual void OnDetach() noexcept = 0;
 	};
 
@@ -18,7 +19,7 @@ namespace Framework
 		void PushLayer(std::shared_ptr<Layer> layer);
 		void PopLayer();
 		void OnUpdate();
-		void OnEvent();
+		void OnEvent(Event& e);
 		void OnRender();
 		void Flush();
 		void Update();

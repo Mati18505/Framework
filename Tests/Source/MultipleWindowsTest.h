@@ -42,7 +42,7 @@ public:
 		}
 	}
 	void OnRender() override {}
-	void OnEvent() override {}
+	void OnEvent(Framework::Event& e) override {}
 	void OnDetach() noexcept override {}
 
 private:

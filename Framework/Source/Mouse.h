@@ -1,13 +1,14 @@
 #pragma once
 #include <queue>
 #include <optional>
+#include "Event.h"
 
 namespace Framework {
 	class Mouse
 	{
 		friend class Window;
 	public:
-		class Event
+		class Event : public Framework::Event
 		{
 		public:
 			enum class Type
@@ -61,6 +62,9 @@ namespace Framework {
 			{
 				return rightIsPressed;
 			}
+
+			static EventType GetStaticType() { return EventType::mouse; }
+			EventType GetEventType() const override { return GetStaticType(); };
 		};
 	public:
 		Mouse() = default;

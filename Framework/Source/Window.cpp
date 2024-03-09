@@ -63,9 +63,58 @@ namespace Framework {
 		SetMouseCallbacks(mc);
 
 		WindowCallbacks wc;
-		wc.focusChanged = [&](char32_t character) {
+		wc.focusChanged = [&](bool focused) {
 			kbd.ClearState();
+			if (focused)
+			{
+				Window::Event e(Window::Event::Type::FocusEnter);
+				windowEvents.push(e);
+				TrimEventBuffer();
+			}
+			else
+			{
+				Window::Event e(Window::Event::Type::FocusLeave);
+				windowEvents.push(e);
+				TrimEventBuffer();
+			}
+		};
+		wc.framebufferSizeChanged = [&](int x, int y) {
+			Window::Event e(Window::Event::Type::FramebufferSizeChanged, x, y);
+			windowEvents.push(e);
+			TrimEventBuffer();
+		};
+		wc.windowShouldClose = [&]() {
+			Window::Event e(Window::Event::Type::ShouldClose);
+			windowEvents.push(e);
+			TrimEventBuffer();
 		};
 		SetWindowCallbacks(wc);
+	}
+	void Window::DispatchEvents()
+	{
+		assert(eventHandler != nullptr);
+		while (!kbd.KeyIsEmpty())
+		{
+			if (auto opt = kbd.ReadKey())
+				eventHandler(opt.value());
+		}
+		while (!mouse.IsEmpty())
+		{
+			if (auto opt = mouse.Read())
+				eventHandler(opt.value());
+		}
+		while (!windowEvents.empty())
+		{
+			Window::Event e = windowEvents.front();
+			windowEvents.pop();
+			eventHandler(e);
+		}
+	}
+	void Window::TrimEventBuffer()
+	{
+		while (windowEvents.size() > 16)
+		{
+			windowEvents.pop();
+		}
 	}
 }

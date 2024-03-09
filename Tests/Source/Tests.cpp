@@ -1,6 +1,9 @@
 #include "EventTest.h"
 #include "MultipleWindowsTest.h"
+#include "Event.h"
 #include <queue>
+
+using namespace Framework;
 
 class TestLayer : public Framework::Layer {
 public:
@@ -11,19 +14,26 @@ public:
 	{}
 
 	void OnAttach() override {
-		using namespace Framework;
 		Application::Get().GetLayerStack().PushLayer(testLayers.front());
 		testLayers.pop();
 	}
 	void OnUpdate() override {}
 	void OnRender() override {}
-	void OnEvent() override {
-		Next();
+	void OnEvent(Framework::Event& e) override {
+		Framework::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<Framework::CustomEvent>([&](Framework::CustomEvent& e) {
+			if (e.GetEventName() == "NextLayerEvent")
+			{
+				Next();
+				return true;
+			}
+			return false;
+		});
+		
 	}
 	void OnDetach() noexcept override {}
 
 	void Next() {
-		using namespace Framework;
 		Application::Get().GetLayerStack().PopLayer();
 		Application::Get().GetLayerStack().PushLayer(testLayers.front());
 		testLayers.pop();
@@ -32,7 +42,6 @@ public:
 
 std::unique_ptr<Framework::Application> Framework::CreateApplication()
 {
-	using namespace Framework;
 	auto app = std::make_unique<Application>();
 
 	std::queue<std::shared_ptr<Framework::Layer>> layers;

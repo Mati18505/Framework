@@ -1,6 +1,7 @@
 #pragma once
 #include <queue>
 #include <bitset>
+#include "Event.h"
 
 namespace Framework {
 	class Keyboard
@@ -8,7 +9,7 @@ namespace Framework {
 		using KeyCode = int;
 		friend class Window;
 	public:
-		class Event
+		class Event : public Framework::Event
 		{
 		public:
 			enum class Type
@@ -37,6 +38,9 @@ namespace Framework {
 			{
 				return code;
 			}
+
+			static EventType GetStaticType() { return EventType::keyboard; }
+			EventType GetEventType() const override { return GetStaticType(); };
 		};
 
 		Keyboard() = default;

@@ -27,4 +27,9 @@ namespace Framework {
 		}
 	}
 	Application& Application::Get() { return *appInstance; }
+
+	void Application::OnEvent(Event& e)
+	{
+		GetLayerStack().OnEvent(e);
+	}
 }

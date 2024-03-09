@@ -2,6 +2,7 @@
 #include "FrameworkException.h"
 #include <Keyboard.h>
 #include <Mouse.h>
+#include <cassert>
 
 namespace Framework {
     class Window {
@@ -93,5 +94,62 @@ namespace Framework {
         Mouse mouse;
 
         void SetDefaultCallbacks();
+
+        std::function<void(Event& e)> eventHandler;
+        void DispatchEvents();
+
+        class Event : public Framework::Event
+        {
+        public:
+            enum class Type
+            {
+                ShouldClose,
+                FramebufferSizeChanged,
+                FocusEnter,
+                FocusLeave
+            };
+
+        private:
+            Type type;
+            int framebufferWidth;
+            int framebufferHeight;
+
+        public:
+            Event(Type type)
+                :
+                type(type),
+                framebufferWidth(0),
+                framebufferHeight(0)
+            {}
+            Event(Type type, int framebufferWidth, int framebufferHeight)
+                :
+                type(type),
+                framebufferWidth(framebufferWidth),
+                framebufferHeight(framebufferHeight)
+            {}
+
+            Type GetType() const
+            {
+                return type;
+            }
+
+            int GetFramebufferWidth() const
+            {
+                assert(type == Type::FramebufferSizeChanged);
+                return framebufferWidth;
+            }
+            int GetFramebufferHeight() const
+            {
+                assert(type == Type::FramebufferSizeChanged);
+                return framebufferHeight;
+            }
+
+            static EventType GetStaticType() { return EventType::window; }
+            EventType GetEventType() const override { return GetStaticType(); };
+        };
+
+        std::queue<Window::Event> windowEvents;
+
+        void TrimEventBuffer();
     };
 }

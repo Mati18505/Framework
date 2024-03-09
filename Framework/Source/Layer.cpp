@@ -25,10 +25,10 @@ namespace Framework
 		for (const auto& layer : layers)
 			layer->OnUpdate();
 	}
-	void LayerStack::OnEvent()
+	void LayerStack::OnEvent(Event& e)
 	{
 		for (auto it = layers.rbegin(); it != layers.rend(); it++)
-			it->get()->OnEvent();
+			it->get()->OnEvent(e);
 	}
 	void LayerStack::OnRender()
 	{

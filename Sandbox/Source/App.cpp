@@ -32,7 +32,7 @@ public:
 		for (auto window : windows)
 			window->SwapBuffers();*/
 	}
-	void OnEvent() override { 
+	void OnEvent(Event& e) override { 
 		std::cout << "On Event" << std::endl;
 	}
 	void OnDetach() noexcept override {
