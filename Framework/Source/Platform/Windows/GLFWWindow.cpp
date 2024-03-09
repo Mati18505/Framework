@@ -143,6 +143,7 @@ namespace Framework
         glfwSetWindowCloseCallback(window, WindowCloseCallback);
         glfwSetWindowSizeCallback(window, WindowSizeCallback);
         glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+        glfwSetWindowFocusCallback(window, FocusCallback);
     }
 
     void GLFWWindow::Initialize()
@@ -280,5 +281,14 @@ namespace Framework
 
         if (window.framebufferSizeChanged)
             window.framebufferSizeChanged(width, height);
+    }
+    
+    void GLFWWindow::FocusCallback(GLFWwindow* glfwWindow, int focused)
+    {
+        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(glfwWindow));
+        auto& window = callbacks->windowCallbacks;
+
+        if(window.focusChanged)
+            window.focusChanged((bool)focused);
     }
 }

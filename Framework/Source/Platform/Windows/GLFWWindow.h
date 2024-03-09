@@ -51,6 +51,7 @@ namespace Framework
         static void WindowCloseCallback(GLFWwindow* window);
         static void WindowSizeCallback(GLFWwindow* window, int width, int height);
         static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+        static void FocusCallback(GLFWwindow* glfwWindow, int focused);
 
         void Initialize();
         void Deinitialize();

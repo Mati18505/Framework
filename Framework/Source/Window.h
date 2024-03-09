@@ -77,6 +77,7 @@ namespace Framework {
             std::function<void(int width, int height)> windowSizeChanged;
             //In pixels
             std::function<void(int width, int height)> framebufferSizeChanged;
+            std::function<void(bool focused)> focusChanged;
         };
 
         virtual void SetKeyboardCallbacks(const KeyboardCallbacks& kbdCallbacks) = 0;
