@@ -28,6 +28,11 @@ workspace "Framework"
     group "Core"
         include "Framework"
 
+    group "Apps"
+        include "Sandbox"
+        include "Tests"
+        include "UnitTests"
+
 
 workspace "*"
     newaction {
