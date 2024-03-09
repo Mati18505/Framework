@@ -32,6 +32,9 @@ namespace Framework
         void SetKeyboardCallbacks(const KeyboardCallbacks& kbdCallbacks) override;
         void SetMouseCallbacks(const MouseCallbacks& mouseCallbacks) override;
         void SetWindowCallbacks(const WindowCallbacks& windowCallbacks) override;
+        KeyboardCallbacks GetKeyboardCallbacks() override;
+        MouseCallbacks GetMouseCallbacks() override;
+        WindowCallbacks GetWindowCallbacks() override;
 
         GLFWwindow* GetGLFWwindow() { return window; }
 

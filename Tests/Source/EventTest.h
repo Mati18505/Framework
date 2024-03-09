@@ -13,29 +13,9 @@ public:
 
 		Window::WindowDesc desc;
 		window = PlatformFactory::CreateWindow(desc);
+		window->SetDefaultCallbacks();
 
-		Window::MouseCallbacks mc;
-		mc.mousePosChange = [](int x, int y) {
-			std::cout << "Mouse Pos Change: " << x << "_" << y << std::endl;
-		};
-		mc.mouseWheelDelta = [](int delta, int x, int y) {
-			std::cout << "Mouse Wheel Delta: " << delta << ", at: " << x << "_" << y << std::endl;
-		};
-		mc.mouseEnterWindow = []() {
-			std::cout << "Mouse Entered The Window!" << std::endl;
-		};
-		mc.mouseLeaveWindow = []() {
-			std::cout << "Mouse Left The Window!" << std::endl;
-		};
-		mc.mouseButtonPressed = [](int buttonCode, int x, int y) {
-			std::cout << "Mouse Button Pressed: " << buttonCode << ", at: " << x << "_" << y << std::endl;
-		};
-		mc.mouseButtonReleased = [](int buttonCode, int x, int y) {
-			std::cout << "Mouse Button Released: " << buttonCode << ", at: " << x << "_" << y << std::endl;
-		};
-		window->SetMouseCallbacks(mc);
-
-		Window::WindowCallbacks wc;
+		Window::WindowCallbacks wc = window->GetWindowCallbacks();
 		wc.windowSizeChanged = [](int width, int height) {
 			std::cout << "Window Size Changed: " << width << "_" << height << std::endl;
 		};
@@ -47,9 +27,10 @@ public:
 			Application::Get().Stop();
 		};
 		window->SetWindowCallbacks(wc);
-
-		window->SetDefaultCallbacks();
 	}
+
+	int wheel = 0;
+
 	void OnUpdate() override {
 		using namespace Framework;
 
@@ -65,6 +46,51 @@ public:
 			if (opt.value().GetCode() == 257 && opt.value().IsPress())
 				Application::Get().GetLayerStack().OnEvent();
 		}
+
+		while (!window->mouse.IsEmpty())
+		{
+			if (auto opt = window->mouse.Read())
+			{
+				Mouse::Event e = opt.value();
+
+				switch (e.GetType())
+				{
+				case Mouse::Event::Type::Leave:
+					window->SetTitle("Gone!");
+					break;
+				case Mouse::Event::Type::Move:
+				{
+					std::ostringstream ss;
+					ss << e.GetPosX() << "_" << e.GetPosY();
+					window->SetTitle(ss.str());
+					break;
+				}
+				case Mouse::Event::Type::WheelUp:
+					wheel++;
+					window->SetTitle(std::to_string(wheel));
+					break;
+				case Mouse::Event::Type::WheelDown:
+					wheel--;
+					window->SetTitle(std::to_string(wheel));
+					break;
+				case Mouse::Event::Type::RPress:
+					std::cout << "Right mouse button pressed" << std::endl;
+					break;
+				case Mouse::Event::Type::LPress:
+					std::cout << "Left mouse button pressed" << std::endl;
+					break;
+				case Mouse::Event::Type::RRelease:
+					std::cout << "Right mouse button released" << std::endl;
+					break;
+				case Mouse::Event::Type::LRelease:
+					std::cout << "Left mouse button released" << std::endl;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
 	}
 	void OnRender() override {}
 	void OnEvent() override {}

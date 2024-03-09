@@ -146,6 +146,21 @@ namespace Framework
         glfwSetWindowFocusCallback(window, FocusCallback);
     }
 
+    Window::KeyboardCallbacks GLFWWindow::GetKeyboardCallbacks()
+    {
+        return callbacks.kbdCallbacks;
+    }
+
+    Window::MouseCallbacks GLFWWindow::GetMouseCallbacks()
+    {
+        return callbacks.mouseCallbacks;
+    }
+
+    Window::WindowCallbacks GLFWWindow::GetWindowCallbacks()
+    {
+        return callbacks.windowCallbacks;
+    }
+
     void GLFWWindow::Initialize()
     {
         if (!glfwInit()) {
