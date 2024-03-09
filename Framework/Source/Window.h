@@ -1,5 +1,6 @@
 #pragma once
 #include "FrameworkException.h"
+#include <Keyboard.h>
 
 namespace Framework {
     class Window {
@@ -83,5 +84,9 @@ namespace Framework {
         virtual void SetKeyboardCallbacks(const KeyboardCallbacks& kbdCallbacks) = 0;
         virtual void SetMouseCallbacks(const MouseCallbacks& mouseCallbacks) = 0;
         virtual void SetWindowCallbacks(const WindowCallbacks& windowCallbacks) = 0;
+
+        Keyboard kbd;
+
+        void SetDefaultCallbacks();
     };
 }

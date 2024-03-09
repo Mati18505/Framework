@@ -35,21 +35,6 @@ public:
 		};
 		window->SetMouseCallbacks(mc);
 
-		Window::KeyboardCallbacks kc;
-		kc.keyPressed = [](int keyCode, bool repeated) {
-			if (keyCode == 257)
-				Application::Get().GetLayerStack().OnEvent();
-			std::cout << "Keyboard Key Pressed: " << keyCode << ", repeated: " << repeated << std::endl;
-		};
-		kc.keyReleased = [](int keyCode) {
-			std::cout << "Keyboard Key Released: " << keyCode << std::endl;
-		};
-		kc.characterWrite = [](char32_t character) {
-			std::wcout << "Keyboard Character: " << (wchar_t)character << std::endl;
-		};
-		window->SetKeyboardCallbacks(kc);
-
-
 		Window::WindowCallbacks wc;
 		wc.windowSizeChanged = [](int width, int height) {
 			std::cout << "Window Size Changed: " << width << "_" << height << std::endl;
@@ -62,9 +47,24 @@ public:
 			Application::Get().Stop();
 		};
 		window->SetWindowCallbacks(wc);
+
+		window->SetDefaultCallbacks();
 	}
 	void OnUpdate() override {
+		using namespace Framework;
+
 		window->PollEvents();
+		if(auto opt = window->kbd.ReadChar())
+			std::cout<<opt.value()<<std::endl;
+
+		if (window->kbd.IsKeyPressed(87))
+			std::cout << "Forward" << std::endl;
+
+		if (auto opt = window->kbd.ReadKey())
+		{
+			if (opt.value().GetCode() == 257 && opt.value().IsPress())
+				Application::Get().GetLayerStack().OnEvent();
+		}
 	}
 	void OnRender() override {}
 	void OnEvent() override {}
