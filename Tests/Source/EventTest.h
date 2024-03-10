@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Platform/PlatformFactory.h"
 #include "Layer.h"
+#include "KeyCodes.h"
 
 using namespace Framework;
 
@@ -109,7 +110,7 @@ public:
 
 	bool KeyboardEventTest(Keyboard::Event& e)
 	{
-		if (e.GetCode() == 257 && e.IsPress())
+		if (e.GetCode() == FW_KEY_ENTER && e.IsPress())
 		{
 			CustomEvent e("NextLayerEvent");
 			Application::Get().OnEvent(e);
