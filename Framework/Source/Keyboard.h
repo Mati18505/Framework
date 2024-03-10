@@ -8,6 +8,7 @@ namespace Framework {
 	{
 		using KeyCode = int;
 		friend class Window;
+		friend class GLFWWindow;
 	public:
 		class Event : public Framework::Event
 		{

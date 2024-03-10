@@ -43,7 +43,8 @@ namespace Framework
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-        glfwSetWindowUserPointer(window, &callbacks);
+        glfwSetWindowUserPointer(window, this);
+        SetCallbacks();
     }
 
     GLFWWindow::~GLFWWindow()
@@ -120,45 +121,20 @@ namespace Framework
         throw WND_EXCEPTION(std::format("GLFW Error: ({}): {}", error, description));
     }
 
-
-    void GLFWWindow::SetKeyboardCallbacks(const KeyboardCallbacks& kbdCallbacks)
+    void GLFWWindow::SetCallbacks()
     {
-        callbacks.kbdCallbacks = kbdCallbacks;
         glfwSetKeyCallback(window, KeyCallback);
         glfwSetCharCallback(window, CharCallback);
-    }
 
-    void GLFWWindow::SetMouseCallbacks(const MouseCallbacks& mouseCallbacks)
-    {
-        callbacks.mouseCallbacks = mouseCallbacks;
         glfwSetCursorPosCallback(window, MousePositionCallback);
         glfwSetCursorEnterCallback(window, CursorEnterCallback);
         glfwSetMouseButtonCallback(window, MouseButtonCallback);
         glfwSetScrollCallback(window, ScrollCallback);
-    }
 
-    void GLFWWindow::SetWindowCallbacks(const WindowCallbacks& windowCallbacks)
-    {
-        callbacks.windowCallbacks = windowCallbacks;
         glfwSetWindowCloseCallback(window, WindowCloseCallback);
         glfwSetWindowSizeCallback(window, WindowSizeCallback);
         glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
         glfwSetWindowFocusCallback(window, FocusCallback);
-    }
-
-    Window::KeyboardCallbacks GLFWWindow::GetKeyboardCallbacks()
-    {
-        return callbacks.kbdCallbacks;
-    }
-
-    Window::MouseCallbacks GLFWWindow::GetMouseCallbacks()
-    {
-        return callbacks.mouseCallbacks;
-    }
-
-    Window::WindowCallbacks GLFWWindow::GetWindowCallbacks()
-    {
-        return callbacks.windowCallbacks;
     }
 
     void GLFWWindow::Initialize()
@@ -176,22 +152,21 @@ namespace Framework
 
     void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& keyboard = callbacks->kbdCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& kbd = userPtr->kbd;
 
         switch (action)
         {
         case GLFW_PRESS:
-            if(keyboard.keyPressed)
-                keyboard.keyPressed(key, false);
+            kbd.OnKeyPressed(key, false);
             break;
         case GLFW_REPEAT:
-            if(keyboard.keyPressed)
-                keyboard.keyPressed(key, true);
+            if (!kbd.AutorepeatIsEnabled())
+                return;
+            kbd.OnKeyPressed(key, true);
             break;
         case GLFW_RELEASE:
-            if(keyboard.keyReleased)
-                keyboard.keyReleased(key);
+            kbd.OnKeyReleased(key);
             break;
         default:
             assert(false);
@@ -201,44 +176,36 @@ namespace Framework
 
     void GLFWWindow::CharCallback(GLFWwindow* window, unsigned int codepoint)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& keyboard = callbacks->kbdCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& kbd = userPtr->kbd;
 
         char32_t character = codepoint;
-        if(keyboard.characterWrite)
-            keyboard.characterWrite(character);
+        kbd.OnCharacterWrite(character);
     }
 
     void GLFWWindow::MousePositionCallback(GLFWwindow* window, double xpos, double ypos)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& mouse = callbacks->mouseCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& mouse = userPtr->mouse;
 
-        if(mouse.mousePosChange)
-            mouse.mousePosChange((int)std::floor(xpos), (int)std::floor(ypos));
+        mouse.OnMouseMove((int)std::floor(xpos), (int)std::floor(ypos));
     }
 
     void GLFWWindow::CursorEnterCallback(GLFWwindow* window, int entered)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& mouse = callbacks->mouseCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& mouse = userPtr->mouse;
 
         if (entered)
-        {
-            if (mouse.mouseEnterWindow)
-                mouse.mouseEnterWindow();
-        }
+            mouse.OnMouseEnter();
         else
-        {
-            if (mouse.mouseLeaveWindow)
-                mouse.mouseLeaveWindow();
-        }
+            mouse.OnMouseLeave();
     }
 
     void GLFWWindow::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& mouse = callbacks->mouseCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& mouse = userPtr->mouse;
 
         double dx;
         double dy;
@@ -248,20 +215,38 @@ namespace Framework
 
         if (action == GLFW_PRESS)
         {
-            if (mouse.mouseButtonPressed)
-                mouse.mouseButtonPressed(button, x, y);
+            switch (button)
+            {
+            case 0:
+                mouse.OnLeftPressed();
+                break;
+            case 1:
+                mouse.OnRightPressed();
+                break;
+            default:
+                break;
+            }
         }
         else
         {
-            if (mouse.mouseButtonReleased)
-                mouse.mouseButtonReleased(button, x, y);
+            switch (button)
+            {
+            case 0:
+                mouse.OnLeftReleased();
+                break;
+            case 1:
+                mouse.OnRightReleased();
+                break;
+            default:
+                break;
+            }
         }
     }
 
     void GLFWWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(window));
-        auto& mouse = callbacks->mouseCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
+        auto& mouse = userPtr->mouse;
 
         double dx;
         double dy;
@@ -269,41 +254,59 @@ namespace Framework
         int x = (int)std::floor(dx);
         int y = (int)std::floor(dy);
 
-        if(mouse.mouseWheelDelta)
-            mouse.mouseWheelDelta((int)std::floor(yoffset), x, y);
+        int delta = (int)std::floor(yoffset);
+
+        if (delta < 0)
+            mouse.OnWheelDown();
+        else if (delta > 0)
+            mouse.OnWheelUp();
     }
 
     void GLFWWindow::WindowCloseCallback(GLFWwindow* glfwWindow)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(glfwWindow));
-        auto& window = callbacks->windowCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfwWindow));
+        auto& win = *userPtr;
 
-        if (window.windowShouldClose)
-            window.windowShouldClose();
+        Window::Event e(Window::Event::Type::ShouldClose);
+        win.windowEvents.push(e);
+        win.TrimEventBuffer();
     }
     void GLFWWindow::WindowSizeCallback(GLFWwindow* glfwWindow, int width, int height)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(glfwWindow));
-        auto& window = callbacks->windowCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfwWindow));
+        auto& win = *userPtr;
 
-        if (window.windowSizeChanged)
-            window.windowSizeChanged(width, height);
+        Window::Event e(Window::Event::Type::WindowSizeChanged, width, height);
+        win.windowEvents.push(e);
+        win.TrimEventBuffer();
     }
     void GLFWWindow::FramebufferSizeCallback(GLFWwindow* glfwWindow, int width, int height)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(glfwWindow));
-        auto& window = callbacks->windowCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfwWindow));
+        auto& win = *userPtr;
 
-        if (window.framebufferSizeChanged)
-            window.framebufferSizeChanged(width, height);
+        Window::Event e(Window::Event::Type::FramebufferSizeChanged, width, height);
+        win.windowEvents.push(e);
+        win.TrimEventBuffer();
     }
     
     void GLFWWindow::FocusCallback(GLFWwindow* glfwWindow, int focused)
     {
-        const auto* callbacks = static_cast<Callbacks*>(glfwGetWindowUserPointer(glfwWindow));
-        auto& window = callbacks->windowCallbacks;
+        auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfwWindow));
+        auto& win = *userPtr;
 
-        if(window.focusChanged)
-            window.focusChanged((bool)focused);
+        win.kbd.ClearState();
+        if (focused)
+        {
+            Window::Event e(Window::Event::Type::FocusEnter);
+            win.windowEvents.push(e);
+            win.TrimEventBuffer();
+        }
+        else
+        {
+            Window::Event e(Window::Event::Type::FocusLeave);
+            win.windowEvents.push(e);
+            win.TrimEventBuffer();
+        }
     }
 }

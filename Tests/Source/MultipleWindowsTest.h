@@ -21,7 +21,6 @@ public:
 		for (int i = 0; i < windowsCount; i++)
 		{
 			windows.push_back(PlatformFactory::CreateWindow(desc));
-			Window::MouseCallbacks mc;
 		}
 	}
 	void OnUpdate() override {

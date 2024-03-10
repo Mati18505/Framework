@@ -7,6 +7,7 @@ namespace Framework {
 	class Mouse
 	{
 		friend class Window;
+		friend class GLFWWindow;
 	public:
 		class Event : public Framework::Event
 		{

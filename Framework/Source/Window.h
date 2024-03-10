@@ -57,43 +57,8 @@ namespace Framework {
         virtual void SetSize(WindowSize size) = 0;
         virtual void SetTitle(const std::string& title) = 0;
 
-        struct KeyboardCallbacks {
-            std::function<void(int keyCode, bool repeated)> keyPressed;
-            std::function<void(int keyCode)> keyReleased;
-            std::function<void(char32_t character)> characterWrite;
-        };
-
-        struct MouseCallbacks {
-            //top_left = 0,0
-            std::function<void(int x, int y)> mousePosChange;
-            std::function<void()> mouseLeaveWindow;
-            std::function<void()> mouseEnterWindow;
-            std::function<void(int buttonCode, int x, int y)> mouseButtonPressed;
-            std::function<void(int buttonCode, int x, int y)> mouseButtonReleased;
-            std::function<void(int delta, int x, int y)> mouseWheelDelta;
-        };
-
-        struct WindowCallbacks {
-            //Called after ShouldClose returns true
-            std::function<void()> windowShouldClose;
-            //In screen coordinates. Not pixels!
-            std::function<void(int width, int height)> windowSizeChanged;
-            //In pixels
-            std::function<void(int width, int height)> framebufferSizeChanged;
-            std::function<void(bool focused)> focusChanged;
-        };
-
-        virtual void SetKeyboardCallbacks(const KeyboardCallbacks& kbdCallbacks) = 0;
-        virtual void SetMouseCallbacks(const MouseCallbacks& mouseCallbacks) = 0;
-        virtual void SetWindowCallbacks(const WindowCallbacks& windowCallbacks) = 0;
-        virtual KeyboardCallbacks GetKeyboardCallbacks() = 0;
-        virtual MouseCallbacks GetMouseCallbacks() = 0;
-        virtual WindowCallbacks GetWindowCallbacks() = 0;
-
         Keyboard kbd;
         Mouse mouse;
-
-        void SetDefaultCallbacks();
 
         std::function<void(Event& e)> eventHandler;
         void DispatchEvents();
@@ -104,6 +69,9 @@ namespace Framework {
             enum class Type
             {
                 ShouldClose,
+                //In screen coordinates. Not pixels!
+                WindowSizeChanged,
+                //In pixels
                 FramebufferSizeChanged,
                 FocusEnter,
                 FocusLeave
@@ -148,6 +116,7 @@ namespace Framework {
             EventType GetEventType() const override { return GetStaticType(); };
         };
 
+    protected:
         std::queue<Window::Event> windowEvents;
 
         void TrimEventBuffer();

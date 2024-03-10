@@ -14,7 +14,6 @@ public:
 
 		Window::WindowDesc desc;
 		window = PlatformFactory::CreateWindow(desc);
-		window->SetDefaultCallbacks();
 		window->eventHandler = BIND_APPLICATION_EVENT_HANDLER();
 	}
 
@@ -113,7 +112,7 @@ public:
 		if (e.GetCode() == 257 && e.IsPress())
 		{
 			CustomEvent e("NextLayerEvent");
-			Application::Get().GetLayerStack().OnEvent(e);
+			Application::Get().OnEvent(e);
 		}
 		return true;
 	}
