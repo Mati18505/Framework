@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "Application.h"
 #include "Window.h"
-#include "Platform/PlatformFactory.h"
 #include "Layer.h"
 #include <CppUnitTest.h>
 
@@ -20,7 +19,7 @@ public:
 		windows.reserve(windowsCount);
 		for (int i = 0; i < windowsCount; i++)
 		{
-			windows.push_back(PlatformFactory::CreateWindow(desc));
+			windows.push_back(Window::Create(desc));
 		}
 	}
 	void OnUpdate() override {

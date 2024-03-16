@@ -137,6 +137,11 @@ namespace Framework
         glfwSetWindowFocusCallback(window, FocusCallback);
     }
 
+    void GLFWWindow::MakeCurrent()
+    {
+        CreateFn = CreateCurrent;
+    }
+
     void GLFWWindow::Initialize()
     {
         if (!glfwInit()) {
@@ -148,6 +153,11 @@ namespace Framework
     void GLFWWindow::Deinitialize()
     {
         glfwTerminate();
+    }
+
+    std::unique_ptr<Window> GLFWWindow::CreateCurrent(WindowDesc desc)
+    {
+        return std::make_unique<GLFWWindow>(desc);
     }
 
     void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

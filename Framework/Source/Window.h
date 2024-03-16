@@ -116,7 +116,10 @@ namespace Framework {
             EventType GetEventType() const override { return GetStaticType(); };
         };
 
+        static std::unique_ptr<Window> Create(WindowDesc desc);
     protected:
+        static std::function<std::unique_ptr<Window>(WindowDesc desc)> CreateFn;
+
         std::queue<Window::Event> windowEvents;
 
         void TrimEventBuffer();

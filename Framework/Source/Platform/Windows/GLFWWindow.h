@@ -26,6 +26,8 @@ namespace Framework
 
         GLFWwindow* GetGLFWwindow() { return window; }
 
+        static void MakeCurrent();
+
     private:
         GLFWwindow* window;
         WindowDesc desc;
@@ -45,5 +47,7 @@ namespace Framework
 
         void Initialize();
         void Deinitialize();
+
+        static std::unique_ptr<Window> CreateCurrent(WindowDesc desc);
     };
 }

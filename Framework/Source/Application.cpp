@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "Application.h"
 #include <cassert>
+#include "Platform/PlatformDetector.h"
+#ifdef OS_WIN
+#include "Platform/Windows/WindowsOSInitializer.h"
+#endif
 
 namespace Framework {
 	static Application* appInstance;
@@ -10,6 +14,10 @@ namespace Framework {
 		//Only one instance of application allowed
 		assert(!appInstance);
 		appInstance = this;
+
+#ifdef OS_WIN
+		WindowsOSInitializer::Init();
+#endif
 	}
 
 	Application::~Application()

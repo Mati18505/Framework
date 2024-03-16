@@ -29,4 +29,11 @@ namespace Framework {
 			windowEvents.pop();
 		}
 	}
+	std::unique_ptr<Window> Window::Create(WindowDesc desc)
+	{
+		assert(CreateFn != nullptr);
+		return CreateFn(desc);
+	}
+
+	std::function<std::unique_ptr<Window>(Window::WindowDesc desc)> Window::CreateFn{};
 }

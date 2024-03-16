@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Application.h"
 #include "Window.h"
-#include "Platform/PlatformFactory.h"
 #include "Layer.h"
 
 using namespace Framework;
@@ -15,17 +14,12 @@ public:
 		Window::WindowDesc desc;
 		desc.title = "Title";
 
-		window = PlatformFactory::CreateWindow(desc);
-
-		Window::WindowCallbacks windowCallbacks;
-
-		windowCallbacks.windowShouldClose = []() {
-			Application::Get().Stop();
-		};
-		window->SetWindowCallbacks(windowCallbacks);
+		window = Window::Create(desc);
+		window->eventHandler = BIND_APPLICATION_EVENT_HANDLER();
 	}
 	void OnUpdate() override { 
 		window->PollEvents();	
+		window->DispatchEvents();
 	}
 	void OnRender() override { 
 		/*
@@ -34,6 +28,15 @@ public:
 	}
 	void OnEvent(Event& e) override { 
 		std::cout << "On Event" << std::endl;
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<Window::Event>([](Window::Event& e) {
+			if (e.GetType() == Window::Event::Type::ShouldClose)
+			{
+				Application::Get().Stop();
+				return true;
+			}
+			return false;
+		});
 	}
 	void OnDetach() noexcept override {
 		std::cout << "On Detach" << std::endl;

@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "Application.h"
 #include "Window.h"
-#include "Platform/PlatformFactory.h"
 #include "Layer.h"
 #include "KeyCodes.h"
 
@@ -12,9 +11,8 @@ class EventTest : public Framework::Layer {
 public:
 
 	void OnAttach() override {
-
 		Window::WindowDesc desc;
-		window = PlatformFactory::CreateWindow(desc);
+		window = Window::Create(desc);
 		window->eventHandler = BIND_APPLICATION_EVENT_HANDLER();
 	}
 
