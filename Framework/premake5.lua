@@ -10,7 +10,8 @@ project "Framework"
 
     includedirs {
         "./source",
-        "./vendor/glfw/include"
+        "./vendor/glfw/include",
+        "./vendor/spdlog/include"
     }
 
     files {

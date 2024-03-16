@@ -1,3 +1,6 @@
 [submodule "Framework/vendor/glfw"]
 	path = Framework/vendor/glfw
 	url = https://github.com/TheCherno/glfw
+[submodule "Framework/vendor/spdlog"]
+	path = Framework/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
