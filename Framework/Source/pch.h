@@ -7,6 +7,7 @@
 #include <thread>
 #include <utility>
 #include <optional>
+#include <format>
 
 //Data structures
 #include <string>

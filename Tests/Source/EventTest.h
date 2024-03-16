@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Layer.h"
 #include "KeyCodes.h"
+#include <Logger.h>
 
 using namespace Framework;
 
@@ -23,10 +24,10 @@ public:
 		window->PollEvents();
 
 		if(auto opt = window->kbd.ReadChar())
-			std::cout<<opt.value()<<std::endl;
+			LOG_TRACE("{}", opt.value());
 
 		if (window->kbd.IsKeyPressed(87))
-			std::cout << "Forward" << std::endl;
+			LOG_TRACE("Forward");
 
 		window->DispatchEvents();
 	}
@@ -66,16 +67,16 @@ public:
 			window->SetTitle(std::to_string(wheel));
 			break;
 		case Mouse::Event::Type::RPress:
-			std::cout << "Right mouse button pressed" << std::endl;
+			LOG_TRACE("Right mouse button pressed");
 			break;
 		case Mouse::Event::Type::LPress:
-			std::cout << "Left mouse button pressed" << std::endl;
+			LOG_TRACE("Left mouse button pressed");
 			break;
 		case Mouse::Event::Type::RRelease:
-			std::cout << "Right mouse button released" << std::endl;
+			LOG_TRACE("Right mouse button released");
 			break;
 		case Mouse::Event::Type::LRelease:
-			std::cout << "Left mouse button released" << std::endl;
+			LOG_TRACE("Left mouse button released");
 			break;
 		default:
 			break;
@@ -88,17 +89,17 @@ public:
 		switch (e.GetType())
 		{
 		case Window::Event::Type::ShouldClose:
-			std::cout << "Window should close!" << std::endl;
+			LOG_TRACE("Window should close!");
 			Application::Get().Stop();
 			break;
 		case Window::Event::Type::FocusEnter:
-			std::cout << "Window focus enter" << std::endl;
+			LOG_TRACE("Window focus enter");
 			break;
 		case Window::Event::Type::FocusLeave:
-			std::cout << "Window focus leave" << std::endl;
+			LOG_TRACE("Window focus leave");
 			break;
 		case Window::Event::Type::FramebufferSizeChanged:
-			std::cout << "Framebuffer Size Changed: " << e.GetFramebufferWidth() << "_" << e.GetFramebufferHeight() << std::endl;
+			LOG_TRACE("Framebuffer Size Changed: {0}_{1}", e.GetFramebufferWidth(), e.GetFramebufferHeight());
 			break;
 		default:
 			break;

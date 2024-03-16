@@ -5,6 +5,7 @@
 #ifdef OS_WIN
 #include "Platform/Windows/WindowsOSInitializer.h"
 #endif
+#include <Logger.h>
 
 namespace Framework {
 	static Application* appInstance;
@@ -18,6 +19,7 @@ namespace Framework {
 #ifdef OS_WIN
 		WindowsOSInitializer::Init();
 #endif
+		Logger::Init();
 	}
 
 	Application::~Application()
