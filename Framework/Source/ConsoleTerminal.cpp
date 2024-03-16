@@ -41,7 +41,7 @@ namespace Framework {
 	ConsoleTerminal::ConsoleTerminal()
 	{
 		instances++;
-		assert(instances > 1); // Only one instance of terminal is allowed.
+		assert(instances <= 1); // Only one instance of terminal is allowed.
 		inputThread = std::thread([this]() {InputThreadFunc(); });
 	}
 
