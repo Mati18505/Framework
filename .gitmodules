@@ -4,3 +4,7 @@
 [submodule "Framework/vendor/spdlog"]
 	path = Framework/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Framework/vendor/imgui"]
+	path = Framework/vendor/imgui
+	url = https://github.com/Mati18505/imgui.git
+	branch = docking

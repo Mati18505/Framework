@@ -24,6 +24,7 @@ workspace "Framework"
 
     group "Dependencies"
         include "Framework/vendor/glfw"
+        include "Framework/vendor/imgui"
 
     group "Core"
         include "Framework"
@@ -31,7 +32,6 @@ workspace "Framework"
     group "Apps"
         include "Sandbox"
         include "Tests"
-        include "UnitTests"
 
 
 workspace "*"
