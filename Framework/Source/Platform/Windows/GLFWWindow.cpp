@@ -162,6 +162,10 @@ namespace Framework
 
     void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
+	void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (key == GLFW_KEY_UNKNOWN)
+			return;
         auto* userPtr = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
         auto& kbd = userPtr->kbd;
 
