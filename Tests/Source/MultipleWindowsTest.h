@@ -3,9 +3,7 @@
 #include "Application.h"
 #include "Window.h"
 #include "Layer.h"
-#include <CppUnitTest.h>
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+#include "Graphics.h"
 
 class MultipleWindowsTest : public Framework::Layer {
 public:
@@ -44,7 +42,17 @@ public:
 			window->DispatchEvents();
 		}
 	}
-	void OnRender() override {}
+	void OnRender() override {
+		for (int i = 0; i < windows.size(); i++)
+		{
+			const auto& window = windows.at(i);
+
+			window->Gfx().StartFrame();
+			window->Gfx().ClearBuffer(0.0f, 1.0f, 1.0f);
+
+			window->Gfx().EndFrame();
+		}
+	}
 	void OnEvent(Event& e) override {}
 
 	void OnEventMultiWindow(int windowID, Event& e)

@@ -37,9 +37,11 @@ namespace Framework
 	}
 	void LayerStack::Flush()
 	{
+		Update();
+
 		for (const auto& layer : layers)
 			layer->OnDetach();
-
+		
 		layers.clear();
 	}
 	void LayerStack::Update()

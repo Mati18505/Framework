@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "Window.h"
+#include "Platform/Platform.h"
+#include "Graphics.h"
+
+#define WND_EXCEPTION(message) Window::Exception(__LINE__, __FILE__, message)
 
 namespace Framework {
 	void Window::DispatchEvents()
@@ -19,6 +23,10 @@ namespace Framework {
 		{
 			Window::Event e = windowEvents.front();
 			windowEvents.pop();
+
+			if (e.GetType() == Event::Type::FramebufferSizeChanged)
+				gfx->ResizeFramebuffer(e.GetFramebufferWidth(), e.GetFramebufferHeight());
+
 			eventHandler(e);
 		}
 	}
@@ -31,9 +39,12 @@ namespace Framework {
 	}
 	std::unique_ptr<Window> Window::Create(WindowDesc desc)
 	{
-		assert(CreateFn != nullptr);
-		return CreateFn(desc);
+		return Platform::CreateWindow(desc);
 	}
-
-	std::function<std::unique_ptr<Window>(Window::WindowDesc desc)> Window::CreateFn{};
+	Framework::Graphics& Window::Gfx() const
+	{
+		if (!gfx)
+			throw WND_EXCEPTION("Graphics is not initialized.");
+		return *gfx;
+	}
 }

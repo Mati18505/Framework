@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GLFWWindow.h"
+#include "Graphics.h"
 #include <GLFW/glfw3.h>
 #include <format>
 #include <cassert>
@@ -10,8 +11,6 @@ namespace Framework
 {
     GLFWWindow::GLFWWindow(const WindowDesc& desc)
     {
-        if (windowCount == 0)
-            Initialize();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, desc.resizable);
         glfwWindowHint(GLFW_DECORATED, desc.decorated);
@@ -39,7 +38,6 @@ namespace Framework
         if (window == nullptr) {
             throw WND_EXCEPTION("GLFW window creation failed!");
         }
-        windowCount++;
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
@@ -50,9 +48,6 @@ namespace Framework
     GLFWWindow::~GLFWWindow()
     {
         glfwDestroyWindow(window);
-        windowCount--;
-        if (windowCount == 0)
-            Deinitialize();
     }
     
     bool GLFWWindow::ShouldClose() {
@@ -111,7 +106,14 @@ namespace Framework
         glfwSetWindowSize(window, size.width, size.height);
     }
 
-    void GLFWWindow::SetTitle(const std::string& title)
+	Framework::Window::WindowSize GLFWWindow::GetFramebufferSize()
+	{
+        WindowSize size;
+        glfwGetFramebufferSize(window, &size.width, &size.height);
+        return size;
+	}
+
+	void GLFWWindow::SetTitle(const std::string& title)
     {
         glfwSetWindowTitle(window, title.c_str());
     }
@@ -137,12 +139,7 @@ namespace Framework
         glfwSetWindowFocusCallback(window, FocusCallback);
     }
 
-    void GLFWWindow::MakeCurrent()
-    {
-        CreateFn = CreateCurrent;
-    }
-
-    void GLFWWindow::Initialize()
+	void GLFWWindow::Initialize()
     {
         if (!glfwInit()) {
             throw WND_EXCEPTION("GLFW init failed!");
@@ -153,15 +150,13 @@ namespace Framework
     void GLFWWindow::Deinitialize()
     {
         glfwTerminate();
-    }
+	}
 
-    std::unique_ptr<Window> GLFWWindow::CreateCurrent(WindowDesc desc)
-    {
-        return std::make_unique<GLFWWindow>(desc);
-    }
+	void GLFWWindow::SetGfx(std::unique_ptr<Graphics> gfx)
+	{
+        this->gfx = std::move(gfx);
+	}
 
-    void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-    {
 	void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		if (key == GLFW_KEY_UNKNOWN)

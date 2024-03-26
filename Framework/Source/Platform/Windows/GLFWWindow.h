@@ -4,7 +4,6 @@
 
 namespace Framework
 {
-    static int windowCount = 0;
     class GLFWWindow : public Window {
     public:
         explicit GLFWWindow(const WindowDesc& desc);
@@ -20,13 +19,18 @@ namespace Framework
 
         void SetSize(WindowSize size) override;
 
+        WindowSize GetFramebufferSize() override;
+
         void SetTitle(const std::string& title) override;
 
         void SetCallbacks();
 
-        GLFWwindow* GetGLFWwindow() { return window; }
+		GLFWwindow* GetGLFWwindow() { return window; }
 
-        static void MakeCurrent();
+		static void Initialize();
+		static void Deinitialize();
+
+        void SetGfx(std::unique_ptr<Graphics> gfx);
 
     private:
         GLFWwindow* window;
@@ -44,10 +48,5 @@ namespace Framework
         static void WindowSizeCallback(GLFWwindow* window, int width, int height);
         static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
         static void FocusCallback(GLFWwindow* glfwWindow, int focused);
-
-        void Initialize();
-        void Deinitialize();
-
-        static std::unique_ptr<Window> CreateCurrent(WindowDesc desc);
     };
 }

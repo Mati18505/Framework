@@ -23,4 +23,7 @@ project "Framework"
     libdirs {
     }
 
-    links { "glfw" }
+    links { "glfw", "ImGui" }
+    
+    filter "platforms:Win64"
+        links { "d3d11", "dxguid" }

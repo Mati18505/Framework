@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 	}
 	catch (const FrameworkException& e)
 	{
-		std::cout << "Unhandled Exception: Type: " << e.GetType() << ", " << std::endl << e.GetLocationString() << std::endl << "Message: " << e.what() << std::endl;
+		std::cout << "Unhandled Exception:" << std::endl << "Type: " << e.GetType() << ", " << std::endl << e.GetLocationString() << std::endl << "Message: " << e.what() << std::endl;
 	}
 	catch(const std::exception& e)
 	{

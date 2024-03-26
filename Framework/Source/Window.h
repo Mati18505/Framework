@@ -5,6 +5,7 @@
 #include <cassert>
 
 namespace Framework {
+    class Graphics;
     class Window {
     public:
         class Exception : public FrameworkException
@@ -55,10 +56,12 @@ namespace Framework {
 
         virtual void SetMode(Mode mode) = 0;
         virtual void SetSize(WindowSize size) = 0;
-        virtual void SetTitle(const std::string& title) = 0;
+        virtual WindowSize GetFramebufferSize() = 0;
+		virtual void SetTitle(const std::string& title) = 0;
 
         Keyboard kbd;
         Mouse mouse;
+        Graphics& Gfx() const;
 
         std::function<void(Event& e)> eventHandler;
         void DispatchEvents();
@@ -118,10 +121,12 @@ namespace Framework {
 
         static std::unique_ptr<Window> Create(WindowDesc desc);
     protected:
-        static std::function<std::unique_ptr<Window>(WindowDesc desc)> CreateFn;
-
         std::queue<Window::Event> windowEvents;
 
         void TrimEventBuffer();
+
+		std::unique_ptr<Graphics> gfx;
+
+
     };
 }

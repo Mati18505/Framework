@@ -7,3 +7,4 @@ bin
 **.vcxproj.user
 x64
 *.log
+*.ini

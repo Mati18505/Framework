@@ -1,11 +1,8 @@
 #include "pch.h"
 #include "Application.h"
 #include <cassert>
-#include "Platform/PlatformDetector.h"
-#ifdef OS_WIN
-#include "Platform/Windows/WindowsOSInitializer.h"
-#endif
 #include <Logger.h>
+#include "Platform/Platform.h"
 
 namespace Framework {
 	static Application* appInstance;
@@ -16,14 +13,13 @@ namespace Framework {
 		assert(!appInstance);
 		appInstance = this;
 
-#ifdef OS_WIN
-		WindowsOSInitializer::Init();
-#endif
+		Platform::Init();
 		Logger::Init();
 	}
 
 	Application::~Application()
 	{
+		layerStack.Flush();
 		appInstance = nullptr;
 	}
 

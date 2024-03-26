@@ -1,6 +1,7 @@
 #include "EventTest.h"
 #include "MultipleWindowsTest.h"
 #include "ConsoleTest.h"
+#include "ImGuiTest.h"
 #include "Event.h"
 #include <queue>
 
@@ -46,6 +47,7 @@ std::unique_ptr<Framework::Application> Framework::CreateApplication()
 	auto app = std::make_unique<Application>();
 
 	std::queue<std::shared_ptr<Framework::Layer>> layers;
+	layers.push(std::make_shared<ImGuiTest>());
 	layers.push(std::make_shared<EventTest>());
 	layers.push(std::make_shared<ConsoleTest>());
 	layers.push(std::make_shared<MultipleWindowsTest>());
