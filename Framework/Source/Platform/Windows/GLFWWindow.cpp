@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GLFWWindow.h"
 #include "Graphics.h"
+#include "ioc/Container.h"
 #include <GLFW/glfw3.h>
 #include <format>
 #include <cassert>
@@ -9,7 +10,8 @@
 
 namespace Framework
 {
-    GLFWWindow::GLFWWindow(const WindowDesc& desc)
+    GLFWWindow::GLFWWindow(IoCParams params)
+        : desc(std::move(params.desc))
     {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, desc.resizable);
@@ -43,6 +45,8 @@ namespace Framework
 
         glfwSetWindowUserPointer(window, this);
         SetCallbacks();
+
+        gfx = ioc::Container::Get().Resolve<Graphics>({ .window = this });
     }
 
     GLFWWindow::~GLFWWindow()
@@ -150,11 +154,6 @@ namespace Framework
     void GLFWWindow::Deinitialize()
     {
         glfwTerminate();
-	}
-
-	void GLFWWindow::SetGfx(std::unique_ptr<Graphics> gfx)
-	{
-        this->gfx = std::move(gfx);
 	}
 
 	void GLFWWindow::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

@@ -10,8 +10,8 @@
 
 namespace Framework {
 
-	DX11Graphics::DX11Graphics(Window* window, HWND hwnd)
-		: window(window), hwnd(hwnd)
+	DX11Graphics::DX11Graphics(IoCParams params, HWND hwnd)
+		: window(params.window), hwnd(hwnd)
 	{
 		DXGI_SAMPLE_DESC sampleDesc;
 		sampleDesc.Count = 1;

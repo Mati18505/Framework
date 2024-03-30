@@ -12,10 +12,10 @@ public:
 	TestsApplication()
 		: Application()
 	{
+		testLayers.push(std::make_shared<MultipleWindowsTest>());
 		testLayers.push(std::make_shared<ImGuiTest>());
 		testLayers.push(std::make_shared<EventTest>());
 		testLayers.push(std::make_shared<ConsoleTest>());
-		testLayers.push(std::make_shared<MultipleWindowsTest>());
 
 		GetLayerStack().PushLayer(testLayers.front());
 		testLayers.pop();

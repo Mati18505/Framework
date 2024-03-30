@@ -6,7 +6,7 @@ namespace Framework
 {
     class GLFWWindow : public Window {
     public:
-        explicit GLFWWindow(const WindowDesc& desc);
+        explicit GLFWWindow(IoCParams params);
         ~GLFWWindow() override;
 
         bool ShouldClose() override;
@@ -29,8 +29,6 @@ namespace Framework
 
 		static void Initialize();
 		static void Deinitialize();
-
-        void SetGfx(std::unique_ptr<Graphics> gfx);
 
     private:
         GLFWwindow* window;

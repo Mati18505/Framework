@@ -43,6 +43,11 @@ namespace Framework {
             int fullscreenRefreshRate = -1;
         };
 
+		struct IoCParams
+		{
+			WindowDesc desc;
+		};
+
         virtual bool ShouldClose() = 0;
 
         enum class CursorMode
@@ -119,14 +124,12 @@ namespace Framework {
             EventType GetEventType() const override { return GetStaticType(); };
         };
 
-        static std::unique_ptr<Window> Create(WindowDesc desc);
+        static std::shared_ptr<Window> Create(const WindowDesc& desc);
     protected:
         std::queue<Window::Event> windowEvents;
 
         void TrimEventBuffer();
 
-		std::unique_ptr<Graphics> gfx;
-
-
+		std::shared_ptr<Graphics> gfx;
     };
 }

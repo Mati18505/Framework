@@ -7,7 +7,7 @@
 namespace Framework {
 	class DX11Graphics : public Graphics {
 	public:
-		DX11Graphics(Window* window, HWND hwnd);
+		DX11Graphics(IoCParams params, HWND hwnd);
 		DX11Graphics(const DX11Graphics&) = delete;
 		DX11Graphics& operator=(const DX11Graphics&) = delete;
 

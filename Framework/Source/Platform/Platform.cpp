@@ -11,10 +11,5 @@ namespace Framework
 		impl = std::make_unique<PlatformWindows>();
 #endif
 	}
-
-	std::unique_ptr<Window> Platform::CreateWindow(const Window::WindowDesc& desc)
-	{
-		return impl->CreateWindow(desc);
-	}
 }
 

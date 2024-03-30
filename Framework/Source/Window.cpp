@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Platform/Platform.h"
 #include "Graphics.h"
+#include "ioc/Container.h"
 
 #define WND_EXCEPTION(message) Window::Exception(__LINE__, __FILE__, message)
 
@@ -37,9 +38,9 @@ namespace Framework {
 			windowEvents.pop();
 		}
 	}
-	std::unique_ptr<Window> Window::Create(WindowDesc desc)
+	std::shared_ptr<Window> Window::Create(const WindowDesc& desc)
 	{
-		return Platform::CreateWindow(desc);
+		return ioc::Container::Get().Resolve<Window>({ desc });
 	}
 	Framework::Graphics& Window::Gfx() const
 	{

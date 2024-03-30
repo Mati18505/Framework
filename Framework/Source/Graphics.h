@@ -2,9 +2,15 @@
 struct ImDrawData;
 
 namespace Framework {
+	class Window;
 	class Graphics {
 		friend class Window;
 	public:
+		struct IoCParams
+		{
+			Window* window;
+		};
+
 		virtual ~Graphics() = default;
 		
 		virtual void StartFrame() = 0;

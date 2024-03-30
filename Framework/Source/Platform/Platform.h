@@ -8,7 +8,6 @@ namespace Framework {
 	class Platform {
 	public:
 		static void Init();
-		static std::unique_ptr<Window> CreateWindow(const Window::WindowDesc& desc);
 	private:
 		inline static std::unique_ptr<PlatformImpl> impl;
 	};
@@ -16,6 +15,5 @@ namespace Framework {
 	class PlatformImpl {
 	public:
 		virtual ~PlatformImpl() = default;
-		virtual std::unique_ptr<Window> CreateWindow(const Window::WindowDesc& desc) = 0;
 	};
 }

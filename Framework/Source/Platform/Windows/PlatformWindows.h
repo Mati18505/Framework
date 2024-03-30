@@ -6,7 +6,6 @@ namespace Framework {
 	public:
 		PlatformWindows();
 		~PlatformWindows() override;
-		std::unique_ptr<Window> CreateWindow(const Window::WindowDesc& desc) override;
 	};
 }
 
