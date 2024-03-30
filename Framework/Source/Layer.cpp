@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Layer.h"
 #include <cassert>
+#include <ranges>
 
 namespace Framework
 {
@@ -20,17 +21,17 @@ namespace Framework
 			layers.pop_back();
 		});
 	}
-	void LayerStack::OnUpdate()
+	void LayerStack::OnUpdate() const
 	{
 		for (const auto& layer : layers)
 			layer->OnUpdate();
 	}
-	void LayerStack::OnEvent(Event& e)
+	void LayerStack::OnEvent(Event& e) const
 	{
-		for (auto it = layers.rbegin(); it != layers.rend(); it++)
-			it->get()->OnEvent(e);
+		for (const auto& layer : layers | std::views::reverse)
+			layer->OnEvent(e);
 	}
-	void LayerStack::OnRender()
+	void LayerStack::OnRender() const
 	{
 		for (const auto& layer : layers)
 			layer->OnRender();

@@ -6,7 +6,8 @@ project "Sandbox"
     objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
     includedirs {
-        "%{wks.location}/Framework/source"
+        "%{wks.location}/Framework/source",
+        "%{wks.location}/Framework/vendor/ImGui"
     }
 
     files {

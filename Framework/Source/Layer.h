@@ -18,9 +18,9 @@ namespace Framework
 	public:
 		void PushLayer(std::shared_ptr<Layer> layer);
 		void PopLayer();
-		void OnUpdate();
-		void OnEvent(Event& e);
-		void OnRender();
+		void OnUpdate() const;
+		void OnEvent(Event& e) const;
+		void OnRender() const;
 		void Flush();
 		void Update();
 		~LayerStack();

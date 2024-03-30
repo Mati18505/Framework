@@ -3,6 +3,9 @@
 #include "Window.h"
 #include "Layer.h"
 #include <Logger.h>
+#include <Graphics.h>
+#include <imgui.h>
+#include <ImGuiLayer.h>
 
 using namespace Framework;
 
@@ -12,11 +15,15 @@ public:
 	void OnAttach() override { 
 		LOG_TRACE("On Attach");
 
-		Window::WindowDesc desc;
-		desc.title = "Title";
+		Window::WindowDesc desc{
+			.title = "Title"
+		};
 
 		window = Window::Create(desc);
 		window->eventHandler = BIND_APPLICATION_EVENT_HANDLER();
+
+		imguiLayer = std::make_shared<ImGuiLayer>(window);
+		Application::Get().GetLayerStack().PushLayer(imguiLayer);
 
 		LOG_CORE_TRACE("Test core trace.");
 		LOG_CORE_INFO("Test core info.");
@@ -36,9 +43,15 @@ public:
 		LOG_ONCE("Once");
 	}
 	void OnRender() override { 
-		/*
-		for (auto window : windows)
-			window->SwapBuffers();*/
+		window->Gfx().StartFrame();
+		window->Gfx().ClearBuffer(0.5f, 0.7f, 0.6f);
+		imguiLayer->Begin();
+		ImGui::ShowDemoWindow();
+		ImGui::Begin("test");
+		ImGui::Button("przycisk");
+		ImGui::End();
+		imguiLayer->End();
+		window->Gfx().EndFrame();
 	}
 	void OnEvent(Event& e) override { 
 		LOG_ONCE("On Event");
@@ -56,7 +69,8 @@ public:
 		LOG_TRACE("On Detach");
 	}
 private:
-	std::unique_ptr<Window> window;
+	std::shared_ptr<ImGuiLayer> imguiLayer;
+	std::shared_ptr<Window> window;
 };
 
 std::unique_ptr<Framework::Application> Framework::CreateApplication()

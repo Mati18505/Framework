@@ -7,21 +7,23 @@
 
 using namespace Framework;
 
-class TestLayer : public Framework::Layer {
+class TestsApplication : public Application {
 public:
-	std::queue<std::shared_ptr<Framework::Layer>> testLayers;
+	TestsApplication()
+		: Application()
+	{
+		testLayers.push(std::make_shared<ImGuiTest>());
+		testLayers.push(std::make_shared<EventTest>());
+		testLayers.push(std::make_shared<ConsoleTest>());
+		testLayers.push(std::make_shared<MultipleWindowsTest>());
 
-	explicit TestLayer(const std::queue<std::shared_ptr<Framework::Layer>>& testLayers)
-		: testLayers(testLayers)
-	{}
-
-	void OnAttach() override {
-		Application::Get().GetLayerStack().PushLayer(testLayers.front());
+		GetLayerStack().PushLayer(testLayers.front());
 		testLayers.pop();
 	}
-	void OnUpdate() override {}
-	void OnRender() override {}
-	void OnEvent(Framework::Event& e) override {
+	void OnEvent(Event& e) override
+	{
+		GetLayerStack().OnEvent(e);
+
 		Framework::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Framework::CustomEvent>([&](Framework::CustomEvent& e) {
 			if (e.GetEventName() == "NextLayerEvent")
@@ -31,9 +33,10 @@ public:
 			}
 			return false;
 		});
-		
+
 	}
-	void OnDetach() noexcept override {}
+private:
+	std::queue<std::shared_ptr<Framework::Layer>> testLayers;
 
 	void Next() {
 		Application::Get().GetLayerStack().PopLayer();
@@ -44,16 +47,6 @@ public:
 
 std::unique_ptr<Framework::Application> Framework::CreateApplication()
 {
-	auto app = std::make_unique<Application>();
-
-	std::queue<std::shared_ptr<Framework::Layer>> layers;
-	layers.push(std::make_shared<ImGuiTest>());
-	layers.push(std::make_shared<EventTest>());
-	layers.push(std::make_shared<ConsoleTest>());
-	layers.push(std::make_shared<MultipleWindowsTest>());
-
-	std::shared_ptr<Layer> testLayer = std::make_shared<TestLayer>(layers);
-	app->GetLayerStack().PushLayer(testLayer);
-
+	auto app = std::make_unique<TestsApplication>();
 	return app;
 }
